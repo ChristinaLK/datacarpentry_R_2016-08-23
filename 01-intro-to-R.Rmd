@@ -160,51 +160,22 @@ Use `#` signs to comment. Anything to the right of a `#` is ignored by R,
 meaning it won't be executed. Comments are a great way to describe what your
 code does within the code itself, so comment liberally in your R scripts.
 
+## Basic R Objects
 
+You can get output from R simply by typing in math in the console
 
-## Plunge straight into the Survey Data
-
-We will continue to look at the species and weight of animals caught
-in plots in a study area in Arizona over time. The dataset is stored
-as a CSV file: each row holds information for a single animal, and the
-columns represent:
-
-| Column           | Description                        |
-|------------------|------------------------------------|
-| record\_id       | Unique id for the observation      |
-| month            | month of observation               |
-| day              | day of observation                 |
-| year             | year of observation                |
-| plot\_id         | ID of a particular plot            |
-| species\_id      | 2-letter code                      |
-| sex              | sex of animal ("M", "F")           |
-| hindfoot\_length | length of the hindfoot in mm       |
-| weight           | weight of the animal in grams      |
-| genus            | genus of animal                    |
-| species          | species of animal                  |
-| taxa             | e.g. Rodent, Reptile, Bird, Rabbit |
-| plot\_type       | type of plot                       |
-
-The data are available at <http://kbroman.org/datacarp/portal_data_joined.csv>.
-
-We can read that data straight from the web, as follows
-
-```{r read_csv_from_web}
-surveys <- read.csv("http://kbroman.org/datacarp/portal_data_joined.csv")
+```{r, purl=FALSE}
+3 + 5
+12/7
 ```
 
+However, to do useful and interesting things, we need to assign _values_ to
+_objects_. To create an object, we need to give it a name followed by the
+assignment operator `<-`, and the value we want to give it:
 
-### Functions
-
-`read.csv` is a "function". It does something, and "returns" some
-result.
-
-The file name in quotes is called the function "argument": the
-function's "input".
-
-`read.csv` will read in the data from that file, and then spit the
-data back out.
-
+```{r, purl=FALSE}
+weight_kg <- 55
+```
 
 ### Assignment operator
 
@@ -217,7 +188,6 @@ meanings, and so I recommend sticking with the `<-` combination.
 In RStudio, typing <kbd>Alt</kbd> + <kbd>-</kbd> will write ` <- ` in
 a single keystroke.
 
-
 ### Objects in your workspace
 
 The objects you create get added to your "workspace". You can list the
@@ -228,7 +198,6 @@ ls()
 ```
 
 RStudio also shows the objects in the Environment panel.
-
 
 ### Object names
 
@@ -259,28 +228,177 @@ for function names. It's important to be consistent in the styling of your code
 guides are [Hadley Wickham's](http://adv-r.had.co.nz/Style.html) and
 [Google's](https://google-styleguide.googlecode.com/svn/trunk/Rguide.xml).
 
+### Zero-dimensional objects - using single values
 
+Simple R objects include numbers, and text.  They look like this: 
+
+```{r one-d}
+num_value <- 10
+name_value <- "Alice"
+```
+
+We can perform simple calculations with number objects, and other 
+operations with text.  
+
+We can see the "type" of object by using the following function: 
+
+```{r, purl=FALSE}
+class(num_value)
+class(name_value)
+```
+
+### Functions
+
+`class()` is a "function". A function does something, and "returns" some
+result.
+
+The value inside the parentheses is called the function "argument": the
+function's "input".
 
 ### Getting help
 
-If you type `read.csv` and pause for a moment, you'll get a pop-up with
+If you type `class` and pause for a moment, you'll get a pop-up with
 information about the function.
 
 Alternatively, you could type
 
 ```{r help, eval=FALSE}
-?read.csv
+?class
 ```
-
 and the documentation for the function will show up in the lower-right
 pane. These are often a bit _too_ detailed, and so they take some
 practice to read. I generally focus on Usage and Arguments, and then
 on Examples at the bottom. We'll talk more about getting help later.
 
+### One-dimensional objects - using vectors
+
+A vector is the most common and basic data structure in R, and is pretty much
+the workhorse of R. It's a group of values, mainly either numbers or
+characters. You can assign this list of values to a variable, just like you
+would for one item. For example we can create a vector of animal weights:
+
+```{r, purl=FALSE}
+weight_g <- c(50, 60, 65, 82)
+weight_g
+```
+
+Here, we are using the `c()` (for concatenate) function to create the 
+vector.  
+
+A vector can also contain characters:
+
+```{r, purl=FALSE}
+animals <- c("mouse", "rat", "dog")
+animals
+```
+
+There are many functions that allow you to inspect the content of a
+vector. `length()` tells you how many elements are in a particular vector:
+
+```{r, purl=FALSE}
+length(weight_g)
+length(animals)
+```
+
+An important feature of a vector, is that all of the elements are the same type of data.
+The function `class()` indicates the class (the type of element) of an object:
+
+```{r, purl=FALSE}
+class(weight_g)
+class(animals)
+```
+
+The function `str()` provides an overview of the object and the elements it
+contains. It is a really useful function when working with large and complex
+objects:
+
+```{r, purl=FALSE}
+str(weight_g)
+str(animals)
+```
+
+If we want to extract one or several values from a vector, we must provide one
+or several indices in square brackets. For instance:
+
+```{r, results='show', purl=FALSE}
+animals
+animals[2]
+animals[c(3, 2)]
+```
+
+R indexes start at 1. Programming languages like Fortran, MATLAB, and R start
+counting at 1, because that's what human beings typically do. Languages in the C
+family (including C++, Java, Perl, and Python) count from 0 because that's
+simpler for computers to do.
 
 
+You can add elements to your vector by using the `c()` function:
 
-## Data frames
+```{r, purl=FALSE}
+weight_g <- c(weight_g, 90) # adding at the end of the vector
+weight_g <- c(30, weight_g) # adding at the beginning of the vector
+weight_g
+```
+
+What happens here is that we take the original vector `weight_g`, and we are
+adding another item first to the end of the other ones, and then another item at
+the beginning. We can do this over and over again to grow a vector, or assemble
+a dataset. As we program, this may be useful to add results that we are
+collecting or calculating.
+
+We just saw 2 of the 6 **atomic vector** types that R uses: `"character"` and
+`"numeric"`. These are the basic building blocks that all R objects are built
+from. The other 4 are:
+
+* `"logical"` for `TRUE` and `FALSE` (the boolean data type)
+* `"integer"` for integer numbers (e.g., `2L`, the `L` indicates to R that it's an integer)
+* `"complex"` to represent complex numbers with real and imaginary parts (e.g.,
+  `1+4i`) and that's all we're going to say about them
+* `"raw"` that we won't discuss further
+
+Vectors are one of the many **data structures** that R uses. Other important
+ones are lists (`list`), matrices (`matrix`), data frames (`data.frame`) and
+factors (`factor`).
+
+### Two-dimensional - dataframes
+
+A `data.frame` is the representation of data in the format of a table where the
+columns are vectors that all have the same length.  It is the main format used 
+for data anlysis in R.  You can create one yourself 
+by using the `data.frame()` function and giving it several vectors that all have 
+the same length.  However, we will usually create dataframes by reading in a table of  
+data from a spreadsheet and this will be created as a dataframe object.  
+
+## Data Frames
+
+We will continue to look at the species and weight of animals caught
+in plots in a study area in Arizona over time. The dataset is stored
+as a CSV file: each row holds information for a single animal, and the
+columns represent:
+
+| Column           | Description                        |
+|------------------|------------------------------------|
+| record\_id       | Unique id for the observation      |
+| month            | month of observation               |
+| day              | day of observation                 |
+| year             | year of observation                |
+| plot\_id         | ID of a particular plot            |
+| species\_id      | 2-letter code                      |
+| sex              | sex of animal ("M", "F")           |
+| hindfoot\_length | length of the hindfoot in mm       |
+| weight           | weight of the animal in grams      |
+| genus            | genus of animal                    |
+| species          | species of animal                  |
+| taxa             | e.g. Rodent, Reptile, Bird, Rabbit |
+| plot\_type       | type of plot                       |
+
+The data are available at <http://kbroman.org/datacarp/portal_data_joined.csv>.
+
+We can read that data straight from the web, as follows
+
+```{r read_csv_from_web}
+surveys <- read.csv("http://kbroman.org/datacarp/portal_data_joined.csv")
+```
 
 The data are stored in what's called a "data frame". It's a big
 rectangle, with rows being observations and columns being
@@ -383,8 +501,6 @@ downloaded file:
 surveys <- read.csv('CleanData/portal_data_joined.csv')
 ```
 
-
-
 ## Indexing, Sequences, and Subsetting
 
 We can pull out parts of a data frame using square brackets.  We need
@@ -430,63 +546,6 @@ a single number.
 sex[1]
 sex[10000]
 ```
-
-
-### Slices
-
-You can pull out larger slices from the vector by providing vectors of
-indices.  You can use the `c()` function to create a vector.
-
-```{r grab_some_sexes}
-c(1,3,5)
-sex[c(1,3,5)]
-```
-
-To pull out larger slices, it's
-helpful to have ways of creating sequences of numbers.
-
-First, the operator `:` gives you a sequence of consecutive values.
-
-```{r}
-1:10
-10:1
-5:8
-```
-
-`seq` is more flexible.
-
-```{r}
-seq(1, 10, by=2)
-seq(5, 10, length.out=3)
-seq(50, by=5, length.out=10)
-seq(1, 8, by=3) # sequence stops to stay below upper limit
-seq(10, 2, by=-2)  # can also go backwards
-```
-
-
-To get slices of our data frame, we can include a vector for the row
-or column indexes (or both)
-
-```{r}
-surveys[1:3, 7]   # first three elements in the 7th column
-surveys[1, 1:3]   # first three columns in the first row
-surveys[2:4, 6:7] # rows 2-4, columns 6-7
-```
-
-
-### Challenge
-
-The function `nrow()` on a `data.frame` returns the number of rows.
-
-Use `nrow()`, in conjuction with `seq()` to create a new `data.frame` called
-`surveys_by_10` that includes every 10th row of the survey data frame
-starting at row 10 (10, 20, 30, ...)
-
-<!-- end challenge -->
-
-
-
-
 
 ## Missing data
 
